@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import languageMap from "../utils/languageMap";
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../utils/translations";
+import { useNavigate } from "react-router-dom";
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 const BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/original";
@@ -7,6 +10,9 @@ const PROFILE_BASE_URL = "https://image.tmdb.org/t/p/w92";
 
 const MovieModal = ({ movie, onClose }) => {
   const [cast, setCast] = useState([]);
+  const { language } = useLanguage();
+  const t = translations.movieModal[language];
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!movie?.id) return;
@@ -64,12 +70,17 @@ const MovieModal = ({ movie, onClose }) => {
             <span>⭐ {movie.vote_average?.toFixed(1)}</span>
           </div>
 
-          <p className="text-gray-200">{movie.overview || "No description."}</p>
+          <p className="text-white text-sm mt-2">
+            {movie.overview ? movie.overview : t.noOverview}
+          </p>
 
           {/* Oyuncular */}
           {cast.length > 0 && (
             <div className="mt-6">
-              <h3 className="font-semibold text-lg mb-3">Top Cast</h3>
+              <h3 className="text-white text-lg font-semibold mb-2">
+                {t.topCast}
+              </h3>
+
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {cast.map((actor) => (
                   <div
@@ -89,15 +100,22 @@ const MovieModal = ({ movie, onClose }) => {
                       <p className="font-semibold text-sm text-white">
                         {actor.name}
                       </p>
-                      <p className="text-gray-400 text-xs">
-                        {actor.character}
-                      </p>
+                      <p className="text-gray-400 text-xs">{actor.character}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
           )}
+          <div className="text-start mt-6">
+            <button
+              onClick={() => navigate(`/movie/${movie.id}`)}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded"
+            >
+             {t.goToDetail}
+
+            </button>
+          </div>
         </div>
       </div>
     </div>
